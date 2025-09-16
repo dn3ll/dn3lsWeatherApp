@@ -21,6 +21,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 
 class MainActivity : ComponentActivity() {
@@ -81,4 +86,42 @@ fun moreWeather(navController: NavHostController){
     Button(onClick = { navController.popBackStack() }, modifier = Modifier.size(width=200.dp, height = 100.dp)) {
         Text(text = "this is Mw \n Back", fontSize = 20.sp)
     }
+}
+
+data class WeatherResponse(
+    val current_weather: CurrentWeather?,
+    val daily: Daily?
+)
+
+data class CurrentWeather(
+    val temperature: Double,
+    val weathercode: Int,
+    val windspeed: Double,
+    val time: String
+)
+
+data class Daily(
+    val time: List<String>,
+    val temperature_2m_max: List<Double>,
+    val temperature_2m_min: List<Double>
+)
+
+interface WeatherApi {
+    @GET("forecast")
+    fun getWeather(
+        @Query("latitude") lat: Double,
+        @Query("longitude") lon: Double,
+        @Query("daily") daily: String = "weather_code,temperature_2m_max,temperature_2m_min",
+        @Query("hourly") hourly: String = "temperature_2m",
+        @Query("current") current: String = "temperature_2m,weather_code",
+        @Query("timezone") timezone: String = "auto"
+    ): Call<WeatherResponse>
+}
+
+object RetrofitClient {
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://api.open-meteo.com/v1/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val weatherApi: WeatherApi = retrofit.create(WeatherApi::class.java)
 }
