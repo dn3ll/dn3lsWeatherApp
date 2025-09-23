@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,11 +23,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
 
 
 class MainActivity : ComponentActivity() {
@@ -45,7 +42,7 @@ fun AppNavigation(){
         composable("main_menu"){
             MainMenuButtons(navController)
         }
-        composable("moreweather"){
+        composable("moreWeather"){
             moreWeather(navController)
         }
         composable("search"){
@@ -54,16 +51,28 @@ fun AppNavigation(){
     }
 }
 
-//@Preview
 @Composable
-fun MainMenuButtons(navController: NavHostController){
+fun MainMenuButtons(navController: NavHostController, viewModel: WeatherViewModel = WeatherViewModel()){
+
+    val weatherData = viewModel.weatherData.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchWeather(52.52, 13.41)
+    }
+
+    if (weatherData != null) {
+        Text(text = "Temperature: ${weatherData.current_weather?.temperature}°C")
+    } else {
+        Text(text = "Loading...")
+    }
+
     Box(modifier = Modifier.fillMaxSize().padding(bottom = 100.dp, end = 25.dp)){
         Column(
             modifier = Modifier.align(Alignment.BottomEnd),
             verticalArrangement = spacedBy(32.dp),
             horizontalAlignment = Alignment.End)
         {
-            Button(onClick = { navController.navigate("moreweather") }, modifier = Modifier.size(width=200.dp, height = 100.dp)) {
+            Button(onClick = { navController.navigate("moreWeather") }, modifier = Modifier.size(width=200.dp, height = 100.dp)) {
                 Text(text = "Daytime weather", fontSize = 20.sp)
             }
 
