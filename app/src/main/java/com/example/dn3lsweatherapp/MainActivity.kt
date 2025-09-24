@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -57,7 +58,7 @@ fun AppNavigation(){
 }
 
 @Composable
-fun MainMenuButtons(navController: NavHostController, viewModel: WeatherViewModel = WeatherViewModel()){
+fun MainMenuButtons(navController: NavHostController, viewModel: WeatherViewModel = viewModel()){
 
     val weatherData = viewModel.weatherData.collectAsState().value
 
@@ -89,8 +90,9 @@ fun MainMenuButtons(navController: NavHostController, viewModel: WeatherViewMode
 }
 
 @Composable
-fun Search(navController: NavHostController){
+fun Search(navController: NavHostController, viewModel: GeocodingViewModel = viewModel()){
     var query by remember { mutableStateOf("") }
+    val geocodingData = viewModel.geocodingData.collectAsState().value
     Box(modifier = Modifier.fillMaxSize().padding(top = 100.dp, start = 25.dp)){
         Column(
             modifier = Modifier.align(Alignment.TopStart),
@@ -103,12 +105,18 @@ fun Search(navController: NavHostController){
                 label = { Text(text = "Enter city name") }
             )
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { viewModel.fetchGeocoding(query) },
                 modifier = Modifier.size(width = 200.dp, height = 100.dp)
             ) {
                 Text(text = "Search", fontSize = 20.sp)
             }
-
+            if (geocodingData != null) {
+                Text(
+                    text = "City: ${geocodingData?.results?.firstOrNull()?.name ?: "-"}"
+                )
+            } else {
+                Text(text = "Loading...")
+            }
             Button(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.size(width = 200.dp, height = 100.dp)
