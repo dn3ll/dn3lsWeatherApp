@@ -1,10 +1,10 @@
 package com.example.dn3lsweatherapp
 
 data class GeocodingResponse(
-    val results: Results?
+    val results: List<GeocodingResult>?
 )
 
-data class Results(
+data class GeocodingResult(
     val country: String,
     val name: String,
     val latitude: Double,

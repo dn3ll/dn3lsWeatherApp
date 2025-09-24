@@ -13,7 +13,7 @@ interface GeocodingApi {
 
 
     companion object {
-        private const val BASE_URL = "https://api.open-meteo.com/v1/"
+        private const val BASE_URL = "https://geocoding-api.open-meteo.com/v1/"
 
         fun create(): GeocodingApi {
             val retrofit = Retrofit.Builder()

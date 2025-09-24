@@ -12,9 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -85,8 +90,33 @@ fun MainMenuButtons(navController: NavHostController, viewModel: WeatherViewMode
 
 @Composable
 fun Search(navController: NavHostController){
-    Button(onClick = { navController.popBackStack() }, modifier = Modifier.size(width=200.dp, height = 100.dp)) {
-        Text(text = "this is Search \n Back", fontSize = 20.sp)
+    var query by remember { mutableStateOf("") }
+    Box(modifier = Modifier.fillMaxSize().padding(top = 100.dp, start = 25.dp)){
+        Column(
+            modifier = Modifier.align(Alignment.TopStart),
+            verticalArrangement = spacedBy(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally)
+        {
+            TextField(
+                value = query,
+                onValueChange = { query = it },
+                label = { Text(text = "Enter city name") }
+            )
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.size(width = 200.dp, height = 100.dp)
+            ) {
+                Text(text = "Search", fontSize = 20.sp)
+            }
+
+            Button(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.size(width = 200.dp, height = 100.dp)
+            ) {
+                Text(text = "this is Search \n Back", fontSize = 20.sp)
+            }
+
+        }
     }
 }
 
