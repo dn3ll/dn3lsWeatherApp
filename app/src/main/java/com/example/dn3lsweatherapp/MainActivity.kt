@@ -95,7 +95,7 @@ fun Search(navController: NavHostController, viewModel: GeocodingViewModel = vie
     val geocodingData = viewModel.geocodingData.collectAsState().value
     Box(modifier = Modifier.fillMaxSize().padding(top = 100.dp, start = 25.dp)){
         Column(
-            modifier = Modifier.align(Alignment.TopStart),
+            modifier = Modifier.align(Alignment.TopStart), 
             verticalArrangement = spacedBy(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally)
         {
