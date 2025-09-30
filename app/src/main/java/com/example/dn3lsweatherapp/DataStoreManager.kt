@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "datastore")
 
-class DataStoreManager (context: Context) {
+class DataStoreManager (private val context: Context) {
     suspend fun saveData(saveData: CityData) {
         context.dataStore.edit { pref ->
             pref[stringPreferencesKey("cityName")] = saveData.cityName

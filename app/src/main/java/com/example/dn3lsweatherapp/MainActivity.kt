@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,41 +30,46 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val DataStoreManager = DataStoreManager(this)
         setContent {
-            AppNavigation()
+            AppNavigation(DataStoreManager)
         }
     }
 }
 
 @Composable
-fun AppNavigation(){
+fun AppNavigation(dataStoreManager: DataStoreManager){
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "main_menu"){
         composable("main_menu"){
-            MainMenuButtons(navController)
+            MainMenuButtons(navController, viewModel(), dataStoreManager)
         }
         composable("moreWeather"){
             moreWeather(navController)
         }
         composable("search"){
-            Search(navController)
+            Search(navController, viewModel(), dataStoreManager)
         }
     }
 }
 
 @Composable
-fun MainMenuButtons(navController: NavHostController, viewModel: WeatherViewModel = viewModel()){
+fun MainMenuButtons(navController: NavHostController, viewModel: WeatherViewModel = viewModel(), dataStoreManager: DataStoreManager){
+
+    val city by dataStoreManager.getData()
+        .collectAsState(initial = CityData("", 0.0, 0.0))
 
     val weatherData = viewModel.weatherData.collectAsState().value
 
     LaunchedEffect(Unit) {
-        viewModel.fetchWeather(52.52, 13.41)
+        viewModel.fetchWeather(city.latitude, city.longitude)
     }
 
     if (weatherData != null) {
@@ -90,9 +96,10 @@ fun MainMenuButtons(navController: NavHostController, viewModel: WeatherViewMode
 }
 
 @Composable
-fun Search(navController: NavHostController, viewModel: GeocodingViewModel = viewModel()){
+fun Search(navController: NavHostController, viewModel: GeocodingViewModel = viewModel(), dataStoreManager: DataStoreManager){
     var query by remember { mutableStateOf("") }
     val geocodingData = viewModel.geocodingData.collectAsState().value
+    val scope = rememberCoroutineScope()
     Box(modifier = Modifier.fillMaxSize().padding(top = 100.dp, start = 25.dp)){
         Column(
             modifier = Modifier.align(Alignment.TopStart), 
@@ -105,7 +112,15 @@ fun Search(navController: NavHostController, viewModel: GeocodingViewModel = vie
                 label = { Text(text = "Enter city name") }
             )
             Button(
-                onClick = { viewModel.fetchGeocoding(query) },
+                onClick = { viewModel.fetchGeocoding(query)
+                    scope.launch {
+                        dataStoreManager.saveData(CityData(
+                            cityName = geocodingData?.results?.firstOrNull()?.name ?: "",
+                            latitude = geocodingData?.results?.firstOrNull()?.latitude ?: 0.0,
+                            longitude = geocodingData?.results?.firstOrNull()?.longitude ?: 0.0
+                        ))
+                    }
+                          },
                 modifier = Modifier.size(width = 200.dp, height = 100.dp)
             ) {
                 Text(text = "Search", fontSize = 20.sp)
