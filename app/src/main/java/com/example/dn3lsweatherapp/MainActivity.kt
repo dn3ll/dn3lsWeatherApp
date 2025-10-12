@@ -6,11 +6,27 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +67,7 @@ fun AppNavigation(dataStoreManager: DataStoreManager) {
         }
     }
 }
+
 @Preview
 @Composable
 fun MainMenuButtons(
@@ -132,25 +149,50 @@ fun MainMenuButtons(
         val gameboyShellColor = Color(0xFFc3c2bb)
         val gameboyScreenWrapColor = Color(0xFF565661)
         val gameboyScreenColor = Color(0xFFcadc9f)
+        val gameboyButtonColor = Color(0xFF7d0744)
         Box(modifier = Modifier
             .fillMaxSize()
             .background(gameboyShellColor)
-        ){
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(start=20.dp, end=20.dp, top=70.dp)
-                .clip(RoundedCornerShape(bottomEnd = 75.dp))
-                .height(360.dp)
-                .background(gameboyScreenWrapColor)
+        ) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp, top = 70.dp)
+                        .clip(RoundedCornerShape(bottomEnd = 75.dp))
+                        .height(400.dp)
+                        .background(gameboyScreenWrapColor)
 
-            ) {
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(30.dp)
+                            .clip(RoundedCornerShape(15.dp))
+                            .border(2.5.dp, Color.Black, RoundedCornerShape(15.dp))
+                            .background(gameboyScreenColor)
+                    )
+                }
+
                 Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(30.dp)
-                    .clip(RoundedCornerShape(15.dp))
+                    .fillMaxWidth()
+                    .padding(top = 60.dp, start = 30.dp, end = 30.dp)
+                    .height(160.dp)
                     .border(2.5.dp, Color.Black, RoundedCornerShape(15.dp))
-                    .background(gameboyScreenColor)
                 )
+                {
+                    Button(
+                        modifier = Modifier.size(60.dp)
+                            .align(alignment = Alignment.TopEnd),
+                        onClick = {/**/},
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
+                    ) {
+
+                    }
+                }
+
+
             }
         }
 
