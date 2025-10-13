@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -21,17 +23,20 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,7 +62,7 @@ fun AppNavigation(dataStoreManager: DataStoreManager) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "main_menu") {
         composable("main_menu") {
-//            MainMenuButtons(navController, viewModel(), dataStoreManager)
+            MainMenuButtons(navController, viewModel(), dataStoreManager)
         }
         composable("moreWeather") {
             moreWeather(navController)
@@ -68,12 +73,11 @@ fun AppNavigation(dataStoreManager: DataStoreManager) {
     }
 }
 
-@Preview
 @Composable
 fun MainMenuButtons(
-//    navController: NavHostController,
+    navController: NavHostController,
     viewModel: WeatherViewModel = viewModel(),
-//    dataStoreManager: DataStoreManager
+    dataStoreManager: DataStoreManager
 ) {
 //    val city by dataStoreManager.getData()
 //        .collectAsState(initial = CityData("", 0.0, 0.0))
@@ -150,6 +154,17 @@ fun MainMenuButtons(
         val gameboyScreenWrapColor = Color(0xFF565661)
         val gameboyScreenColor = Color(0xFFcadc9f)
         val gameboyButtonColor = Color(0xFF7d0744)
+
+        val city by dataStoreManager.getData()
+            .collectAsState(initial = CityData("", 0.0, 0.0))
+        val weatherData = viewModel.weatherData.collectAsState().value
+
+        LaunchedEffect(city) {
+            if (city.cityName.isNotEmpty()) {
+                viewModel.fetchWeather(city.latitude, city.longitude)
+            }
+        }
+
         Box(modifier = Modifier
             .fillMaxSize()
             .background(gameboyShellColor)
@@ -171,25 +186,90 @@ fun MainMenuButtons(
                             .clip(RoundedCornerShape(15.dp))
                             .border(2.5.dp, Color.Black, RoundedCornerShape(15.dp))
                             .background(gameboyScreenColor)
-                    )
+                    ) {
+                                if (city.cityName.isNotEmpty()) {
+                                    Text(modifier = Modifier.align(alignment = Alignment.TopCenter),
+                                        text = "City: ${city.cityName}", fontSize = 22.sp)
+                                }
+
+                                when {
+                                weatherData != null -> {
+                                    Text(modifier = Modifier.align(alignment = Alignment.TopCenter),
+                                        text = "Temperature: ${weatherData.current_weather?.temperature ?: "-"}°C",
+                                        fontSize = 20.sp
+                                    )
+                                }
+
+                                city.cityName.isNotEmpty() -> {
+                                    Text( modifier = Modifier.align(alignment = Alignment.TopCenter),
+                                        text = "Loading weather for ${city.cityName}...",
+                                        fontSize = 18.sp
+                                    )
+                                }
+
+                                else -> {
+                                    Text( modifier = Modifier.align(alignment = Alignment.TopCenter),
+                                        text = "Select a city", fontSize = 18.sp)
+                                }
+                            }
+
+
+                    }
                 }
 
                 Box(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 60.dp, start = 30.dp, end = 30.dp)
-                    .height(160.dp)
-                    .border(2.5.dp, Color.Black, RoundedCornerShape(15.dp))
+                    .padding(top = 60.dp, start = 15.dp, end = 30.dp)
+                    .height(140.dp)
+
                 )
                 {
+                    Text(
+                        text = "City",
+                        modifier = Modifier.align(Alignment.TopEnd)
+                            .offset(x=-65.dp, y = 10.dp),
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        text = "More",
+                        modifier = Modifier.align(Alignment.BottomEnd)
+                            .offset(x=-106.dp, y = -13.5.dp),
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold
+
+                    )
+
                     Button(
                         modifier = Modifier.size(60.dp)
                             .align(alignment = Alignment.TopEnd),
-                        onClick = {/**/},
+                        onClick = { navController.navigate("search") },
                         shape = CircleShape,
                         colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
                     ) {
 
                     }
+
+                    Button(
+                        modifier = Modifier.size(60.dp)
+                            .align(alignment = Alignment.BottomEnd)
+                            .offset(x = -40.dp)
+                            ,
+                        onClick = { navController.navigate("moreWeather") },
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
+                    ) {
+
+                    }
+
+                    Image(
+                        painter = painterResource(id = R.drawable.d_pad),
+                        contentDescription = "Описание изображения",
+                        modifier = Modifier
+                            .size(140.dp)
+                            .align(alignment = AbsoluteAlignment.CenterLeft)
+                    )
                 }
 
 
