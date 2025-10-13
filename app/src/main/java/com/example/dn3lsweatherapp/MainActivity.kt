@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -154,6 +156,9 @@ fun MainMenuButtons(
         val gameboyScreenWrapColor = Color(0xFF565661)
         val gameboyScreenColor = Color(0xFFcadc9f)
         val gameboyButtonColor = Color(0xFF7d0744)
+        val gameboyFontFamily = FontFamily(
+            Font(R.font.gameboyfont)
+        )
 
         val city by dataStoreManager.getData()
             .collectAsState(initial = CityData("", 0.0, 0.0))
@@ -188,27 +193,35 @@ fun MainMenuButtons(
                             .background(gameboyScreenColor)
                     ) {
                                 if (city.cityName.isNotEmpty()) {
-                                    Text(modifier = Modifier.align(alignment = Alignment.TopCenter),
+                                    Text(modifier = Modifier
+                                        .align(alignment = Alignment.TopCenter)
+                                        .padding(top = 10.dp),
+                                        fontFamily = gameboyFontFamily,
                                         text = "City: ${city.cityName}", fontSize = 22.sp)
                                 }
 
                                 when {
                                 weatherData != null -> {
-                                    Text(modifier = Modifier.align(alignment = Alignment.TopCenter),
+                                    Text(modifier = Modifier
+                                        .align(alignment = Alignment.TopCenter)
+                                        .offset(y=50.dp),
+                                        fontFamily = gameboyFontFamily,
                                         text = "Temperature: ${weatherData.current_weather?.temperature ?: "-"}°C",
-                                        fontSize = 20.sp
+                                        fontSize = 16.sp
                                     )
                                 }
 
                                 city.cityName.isNotEmpty() -> {
                                     Text( modifier = Modifier.align(alignment = Alignment.TopCenter),
                                         text = "Loading weather for ${city.cityName}...",
+                                        fontFamily = gameboyFontFamily,
                                         fontSize = 18.sp
                                     )
                                 }
 
                                 else -> {
                                     Text( modifier = Modifier.align(alignment = Alignment.TopCenter),
+                                        fontFamily = gameboyFontFamily,
                                         text = "Select a city", fontSize = 18.sp)
                                 }
                             }
