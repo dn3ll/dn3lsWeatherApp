@@ -212,10 +212,11 @@ fun MainMenuButtons(
                                 }
 
                                 city.cityName.isNotEmpty() -> {
-                                    Text( modifier = Modifier.align(alignment = Alignment.TopCenter),
-                                        text = "Loading weather for ${city.cityName}...",
+                                    Text( modifier = Modifier.align(alignment = Alignment.TopCenter)
+                                        .offset(y=50.dp),
+                                        text = "Loading...",
                                         fontFamily = gameboyFontFamily,
-                                        fontSize = 18.sp
+                                        fontSize = 20.sp
                                     )
                                 }
 
