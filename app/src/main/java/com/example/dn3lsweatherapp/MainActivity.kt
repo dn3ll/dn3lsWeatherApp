@@ -67,7 +67,7 @@ fun AppNavigation(dataStoreManager: DataStoreManager) {
             MainMenuButtons(navController, viewModel(), dataStoreManager)
         }
         composable("moreWeather") {
-            moreWeather(navController)
+            moreWeather(navController, viewModel(), dataStoreManager)
         }
         composable("search") {
             Search(navController, viewModel(), dataStoreManager)
@@ -223,7 +223,7 @@ fun MainMenuButtons(
                                 else -> {
                                     Text( modifier = Modifier.align(alignment = Alignment.TopCenter),
                                         fontFamily = gameboyFontFamily,
-                                        text = "Select a city", fontSize = 18.sp)
+                                            text = "Select a city", fontSize = 18.sp)
                                 }
                             }
 
@@ -279,7 +279,7 @@ fun MainMenuButtons(
 
                     Image(
                         painter = painterResource(id = R.drawable.d_pad),
-                        contentDescription = "Описание изображения",
+                        contentDescription = "dpad",
                         modifier = Modifier
                             .size(140.dp)
                             .align(alignment = AbsoluteAlignment.CenterLeft)
@@ -361,11 +361,105 @@ fun Search(
 }
 
 @Composable
-fun moreWeather(navController: NavHostController) {
-    Button(
-        onClick = { navController.popBackStack() },
-        modifier = Modifier.size(width = 200.dp, height = 100.dp)
+fun moreWeather (
+    navController: NavHostController,
+    viewModel: WeatherViewModel = viewModel(),
+    dataStoreManager: DataStoreManager
+)
+
+ {
+
+    val gameboyShellColor = Color(0xFFc3c2bb)
+    val gameboyScreenWrapColor = Color(0xFF565661)
+    val gameboyScreenColor = Color(0xFFcadc9f)
+    val gameboyButtonColor = Color(0xFF7d0744)
+    val gameboyFontFamily = FontFamily(
+        Font(R.font.gameboyfont)
+    )
+
+    val city by dataStoreManager.getData()
+        .collectAsState(initial = CityData("", 0.0, 0.0))
+    val weatherData = viewModel.weatherData.collectAsState().value
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(gameboyShellColor)
     ) {
-        Text(text = "this is Mw \n Back", fontSize = 20.sp)
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 70.dp)
+                    .clip(RoundedCornerShape(bottomEnd = 75.dp))
+                    .height(400.dp)
+                    .background(gameboyScreenWrapColor)
+
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(30.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .border(2.5.dp, Color.Black, RoundedCornerShape(15.dp))
+                        .background(gameboyScreenColor)
+                ) {
+                    Text(modifier = Modifier
+                        .align(alignment = Alignment.TopCenter)
+                        .padding(top = 10.dp),
+                        fontFamily = gameboyFontFamily,
+                        text = "Coming soon", fontSize = 22.sp)
+                }
+            }
+
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 60.dp, start = 15.dp, end = 30.dp)
+                .height(140.dp)
+
+            )
+            {
+                Text(
+                    text = "Back",
+                    modifier = Modifier.align(Alignment.TopEnd)
+                        .offset(x=-65.dp, y = 10.dp),
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+
+
+                Button(
+                    modifier = Modifier.size(60.dp)
+                        .align(alignment = Alignment.TopEnd),
+                    onClick = {navController.popBackStack()},
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
+                ) {
+
+                }
+
+                Button(
+                    modifier = Modifier.size(60.dp)
+                        .align(alignment = Alignment.BottomEnd)
+                        .offset(x = -40.dp)
+                    ,
+                    onClick = {/**/},
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
+                ) {
+
+                }
+
+                Image(
+                    painter = painterResource(id = R.drawable.d_pad),
+                    contentDescription = "dpad",
+                    modifier = Modifier
+                        .size(140.dp)
+                        .align(alignment = AbsoluteAlignment.CenterLeft)
+                )
+            }
+
+
+        }
     }
 }
