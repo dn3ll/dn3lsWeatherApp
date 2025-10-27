@@ -9,3 +9,8 @@ val Pink80 = Color(0xFFEFB8C8)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
+
+val gameboyShellColor = Color(0xFFc3c2bb)
+val gameboyScreenWrapColor = Color(0xFF565661)
+val gameboyScreenColor = Color(0xFFcadc9f)
+val gameboyButtonColor = Color(0xFF7d0744)

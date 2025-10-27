@@ -1,25 +1,35 @@
 package com.example.dn3lsweatherapp
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -35,7 +45,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +59,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
+
+
+import com.example.dn3lsweatherapp.ui.theme.gameboyButtonColor
+import com.example.dn3lsweatherapp.ui.theme.gameboyFontFamily
+import com.example.dn3lsweatherapp.ui.theme.gameboyScreenColor
+import com.example.dn3lsweatherapp.ui.theme.gameboyScreenWrapColor
+import com.example.dn3lsweatherapp.ui.theme.gameboyShellColor
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -75,12 +96,7 @@ fun AppNavigation(dataStoreManager: DataStoreManager) {
     }
 }
 
-@Composable
-fun MainMenuButtons(
-    navController: NavHostController,
-    viewModel: WeatherViewModel = viewModel(),
-    dataStoreManager: DataStoreManager
-) {
+
 //    val city by dataStoreManager.getData()
 //        .collectAsState(initial = CityData("", 0.0, 0.0))
 //    val weatherData = viewModel.weatherData.collectAsState().value
@@ -152,14 +168,12 @@ fun MainMenuButtons(
 //            }
 //        }
 //    }
-        val gameboyShellColor = Color(0xFFc3c2bb)
-        val gameboyScreenWrapColor = Color(0xFF565661)
-        val gameboyScreenColor = Color(0xFFcadc9f)
-        val gameboyButtonColor = Color(0xFF7d0744)
-        val gameboyFontFamily = FontFamily(
-            Font(R.font.gameboyfont)
-        )
-
+    @Composable
+    fun MainMenuButtons(
+        navController: NavHostController,
+        viewModel: WeatherViewModel = viewModel(),
+        dataStoreManager: DataStoreManager
+    ) {
         val city by dataStoreManager.getData()
             .collectAsState(initial = CityData("", 0.0, 0.0))
         val weatherData = viewModel.weatherData.collectAsState().value
@@ -289,11 +303,162 @@ fun MainMenuButtons(
 
             }
         }
-
-
-
-
 }
+
+//@Composable
+//fun Search(
+//    navController: NavHostController,
+//    viewModel: GeocodingViewModel = viewModel(),
+//    dataStoreManager: DataStoreManager
+//) {
+//    var query by remember { mutableStateOf("") }
+//    val geocodingData = viewModel.geocodingData.collectAsState().value
+//    val scope = rememberCoroutineScope()
+//
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(gameboyShellColor)
+//    ) {
+//        Column {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = 20.dp, end = 20.dp, top = 70.dp)
+//                    .clip(RoundedCornerShape(bottomEnd = 75.dp))
+//                    .height(400.dp)
+//                    .background(gameboyScreenWrapColor)
+//
+//            ) {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(30.dp)
+//                        .clip(RoundedCornerShape(15.dp))
+//                        .border(2.5.dp, Color.Black, RoundedCornerShape(15.dp))
+//                        .background(gameboyScreenColor)
+//                ) {
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .align(Alignment.TopCenter)
+//                    ){
+//                        OutlinedTextField(
+//                            value = query,
+//                            onValueChange = { query = it },
+//                            label = { Text(text = "Enter city", fontFamily = gameboyFontFamily) },
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(16.dp),
+//                            colors = OutlinedTextFieldDefaults.colors(
+//                                focusedBorderColor = Color.Black,
+//                                unfocusedBorderColor = Color.Black,
+//                                focusedLabelColor = Color.Black,
+//                                unfocusedLabelColor = Color.Black
+//                            ),
+//                            singleLine = true,
+//                            textStyle = TextStyle(fontFamily = gameboyFontFamily)
+//                        )
+//
+//                        OutlinedButton(
+//                            onClick = { viewModel.fetchGeocoding(query)
+//                                Log.d("AddCityScreen", "Search clicked: '$query'") },
+//                            modifier = Modifier
+//                                .width(200.dp)
+//                                .height(50.dp)
+//                                .align(Alignment.CenterHorizontally),
+//                            shape = RectangleShape,
+//                            border = BorderStroke(1.dp, Color.Black)
+//                        ) {
+//                            Text(text = "Search", fontFamily = gameboyFontFamily,
+//                                color = Color.Black)
+//                        }
+//
+//                        if (geocodingData != null) {
+//                            val result = geocodingData.results?.firstOrNull()
+//                            if (result != null) {
+//                                Text(text = "Found: ${result.name}",
+//                                    fontFamily = gameboyFontFamily)
+//                                OutlinedButton(
+//                                    onClick = {
+//                                        scope.launch {
+//                                            dataStoreManager.saveData(
+//                                                CityData(result.name, result.latitude, result.longitude)
+//                                            )
+//                                        }
+//                                        navController.popBackStack()
+//                                    },
+//                                    modifier = Modifier
+//                                        .width(200.dp)
+//                                        .height(50.dp)
+//                                        .align(Alignment.CenterHorizontally),
+//                                    shape = RectangleShape,
+//                                    border = BorderStroke(1.dp, Color.Black)
+//                                ) {
+//                                    Text(text = "Save city", fontSize = 20.sp)
+//                                }
+//                            } else {
+//                                Text(text = "City not found")
+//                            }
+//                        }
+//
+//
+//                    }
+//                }
+//            }
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 60.dp, start = 15.dp, end = 30.dp)
+//                        .height(140.dp)
+//
+//                )
+//                {
+//                    Text(
+//                        text = "Back",
+//                        modifier = Modifier.align(Alignment.TopEnd)
+//                            .offset(x = -65.dp, y = 10.dp),
+//                        fontSize = 30.sp,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//
+//
+//
+//                    Button(
+//                        modifier = Modifier.size(60.dp)
+//                            .align(alignment = Alignment.TopEnd),
+//                        onClick = { navController.popBackStack() },
+//                        shape = CircleShape,
+//                        colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
+//                    ) {
+//
+//                    }
+//
+//                    Button(
+//                        modifier = Modifier.size(60.dp)
+//                            .align(alignment = Alignment.BottomEnd)
+//                            .offset(x = -40.dp),
+//                        onClick = {/**/ },
+//                        shape = CircleShape,
+//                        colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
+//                    ) {
+//
+//                    }
+//
+//                    Image(
+//                        painter = painterResource(id = R.drawable.d_pad),
+//                        contentDescription = "dpad",
+//                        modifier = Modifier
+//                            .size(140.dp)
+//                            .align(alignment = AbsoluteAlignment.CenterLeft)
+//                    )
+//                }
+//
+//
+//
+//        }
+//    }
+//}
 
 @Composable
 fun Search(
@@ -302,88 +467,15 @@ fun Search(
     dataStoreManager: DataStoreManager
 ) {
     var query by remember { mutableStateOf("") }
-    val geocodingData = viewModel.geocodingData.collectAsState().value
+    val geocodingState = viewModel.geocodingData.collectAsState(initial = null)
+    val geocodingData = geocodingState.value
+
     val scope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 100.dp, start = 25.dp)
-    ) {
-        Column(
-            modifier = Modifier.align(Alignment.TopStart),
-            verticalArrangement = Arrangement.spacedBy(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TextField(
-                value = query,
-                onValueChange = { query = it },
-                label = { Text(text = "Enter city name") }
-            )
-
-            Button(
-                onClick = { viewModel.fetchGeocoding(query) },
-                modifier = Modifier.size(width = 200.dp, height = 100.dp)
-            ) {
-                Text(text = "Search", fontSize = 20.sp)
-            }
-
-            if (geocodingData != null) {
-                val result = geocodingData.results?.firstOrNull()
-                if (result != null) {
-                    Text(text = "Found: ${result.name}")
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                dataStoreManager.saveData(
-                                    CityData(result.name, result.latitude, result.longitude)
-                                )
-                            }
-                            navController.popBackStack()
-                        },
-                        modifier = Modifier.size(width = 200.dp, height = 100.dp)
-                    ) {
-                        Text(text = "Save city", fontSize = 20.sp)
-                    }
-                } else {
-                    Text(text = "City not found")
-                }
-            }
-
-            Button(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.size(width = 200.dp, height = 100.dp)
-            ) {
-                Text(text = "Back", fontSize = 20.sp)
-            }
-        }
-    }
-}
-
-@Composable
-fun moreWeather (
-    navController: NavHostController,
-    viewModel: WeatherViewModel = viewModel(),
-    dataStoreManager: DataStoreManager
-)
-
- {
-
-    val gameboyShellColor = Color(0xFFc3c2bb)
-    val gameboyScreenWrapColor = Color(0xFF565661)
-    val gameboyScreenColor = Color(0xFFcadc9f)
-    val gameboyButtonColor = Color(0xFF7d0744)
-    val gameboyFontFamily = FontFamily(
-        Font(R.font.gameboyfont)
-    )
-
-    val city by dataStoreManager.getData()
-        .collectAsState(initial = CityData("", 0.0, 0.0))
-    val weatherData = viewModel.weatherData.collectAsState().value
-
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(gameboyShellColor)
+            .background(gameboyShellColor)
     ) {
         Column {
             Box(
@@ -399,39 +491,105 @@ fun moreWeather (
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(30.dp)
-                        .clip(RoundedCornerShape(15.dp))
+                        .clip(RoundedCornerShape(16.dp))
                         .border(2.5.dp, Color.Black, RoundedCornerShape(15.dp))
                         .background(gameboyScreenColor)
                 ) {
-                    Text(modifier = Modifier
-                        .align(alignment = Alignment.TopCenter)
-                        .padding(top = 10.dp),
-                        fontFamily = gameboyFontFamily,
-                        text = "Coming soon", fontSize = 22.sp)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.TopCenter),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        OutlinedTextField(
+                            value = query,
+                            onValueChange = { query = it },
+                            label = { Text(text = "Enter city", fontFamily = gameboyFontFamily) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Black,
+                                unfocusedBorderColor = Color.Black,
+                                focusedLabelColor = Color.Black,
+                                unfocusedLabelColor = Color.Black
+                            ),
+                            singleLine = true,
+                            textStyle = TextStyle(fontFamily = gameboyFontFamily)
+                        )
+
+                        OutlinedButton(
+                            onClick = {
+                                val q = query.trim()
+                                if (q.isNotEmpty()) {
+                                    Log.d("AddCityScreen", "Search clicked: '$q'")
+                                    viewModel.fetchGeocoding(q)
+                                } else {
+                                    Log.d("AddCityScreen", "Empty query - ignoring")
+                                }
+                            },
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(50.dp)
+                                .align(Alignment.CenterHorizontally),
+                            shape = RectangleShape,
+                            border = BorderStroke(1.dp, Color.Black)
+                        ) {
+                            Text(text = "Search", fontFamily = gameboyFontFamily,
+                                color = Color.Black)
+                        }
+
+                        if (geocodingData != null) {
+                            val snapshot = geocodingData
+                            val result = snapshot?.results?.firstOrNull()
+                            if (result != null) {
+                                Text(text = "Found: ${result.name}",
+                                    fontFamily = gameboyFontFamily)
+                                OutlinedButton(
+                                    onClick = {
+                                        scope.launch {
+                                            dataStoreManager.saveData(
+                                                CityData(result.name, result.latitude, result.longitude)
+                                            )
+                                        }
+                                        navController.popBackStack()
+                                    },
+                                    modifier = Modifier
+                                        .width(200.dp)
+                                        .height(50.dp)
+                                        .align(Alignment.CenterHorizontally),
+                                    shape = RectangleShape,
+                                    border = BorderStroke(1.dp, Color.Black)
+                                ) {
+                                    Text(text = "Save city", fontFamily = gameboyFontFamily, color = Color.Black)
+                                }
+                            } else {
+                                Text(text = "City not found", fontFamily = gameboyFontFamily, color = Color.Black)
+                            }
+                        }
+                    }
                 }
             }
-
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 60.dp, start = 15.dp, end = 30.dp)
-                .height(140.dp)
-
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 60.dp, start = 15.dp, end = 30.dp)
+                    .height(140.dp)
             )
             {
                 Text(
                     text = "Back",
                     modifier = Modifier.align(Alignment.TopEnd)
-                        .offset(x=-65.dp, y = 10.dp),
+                        .offset(x = -65.dp, y = 10.dp),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
 
-
-
                 Button(
                     modifier = Modifier.size(60.dp)
                         .align(alignment = Alignment.TopEnd),
-                    onClick = {navController.popBackStack()},
+                    onClick = { navController.popBackStack() },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
                 ) {
@@ -441,9 +599,8 @@ fun moreWeather (
                 Button(
                     modifier = Modifier.size(60.dp)
                         .align(alignment = Alignment.BottomEnd)
-                        .offset(x = -40.dp)
-                    ,
-                    onClick = {/**/},
+                        .offset(x = -40.dp),
+                    onClick = {/**/ },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
                 ) {
@@ -455,11 +612,114 @@ fun moreWeather (
                     contentDescription = "dpad",
                     modifier = Modifier
                         .size(140.dp)
-                        .align(alignment = AbsoluteAlignment.CenterLeft)
+                        .align(alignment = Alignment.CenterStart)
                 )
             }
-
-
         }
     }
 }
+
+
+
+
+
+
+
+
+
+    @Composable
+    fun moreWeather(
+        navController: NavHostController,
+        viewModel: WeatherViewModel = viewModel(),
+        dataStoreManager: DataStoreManager
+    ) {
+        val city by dataStoreManager.getData()
+            .collectAsState(initial = CityData("", 0.0, 0.0))
+        val weatherData = viewModel.weatherData.collectAsState().value
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(gameboyShellColor)
+        ) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp, top = 70.dp)
+                        .clip(RoundedCornerShape(bottomEnd = 75.dp))
+                        .height(400.dp)
+                        .background(gameboyScreenWrapColor)
+
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(30.dp)
+                            .clip(RoundedCornerShape(15.dp))
+                            .border(2.5.dp, Color.Black, RoundedCornerShape(15.dp))
+                            .background(gameboyScreenColor)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopCenter)
+                                .padding(top = 10.dp),
+                            fontFamily = gameboyFontFamily,
+                            text = "Coming soon", fontSize = 22.sp
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 60.dp, start = 15.dp, end = 30.dp)
+                        .height(140.dp)
+
+                )
+                {
+                    Text(
+                        text = "Back",
+                        modifier = Modifier.align(Alignment.TopEnd)
+                            .offset(x = -65.dp, y = 10.dp),
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+
+
+                    Button(
+                        modifier = Modifier.size(60.dp)
+                            .align(alignment = Alignment.TopEnd),
+                        onClick = { navController.popBackStack() },
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
+                    ) {
+
+                    }
+
+                    Button(
+                        modifier = Modifier.size(60.dp)
+                            .align(alignment = Alignment.BottomEnd)
+                            .offset(x = -40.dp),
+                        onClick = {/**/ },
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(containerColor = gameboyButtonColor)
+                    ) {
+
+                    }
+
+                    Image(
+                        painter = painterResource(id = R.drawable.d_pad),
+                        contentDescription = "dpad",
+                        modifier = Modifier
+                            .size(140.dp)
+                            .align(alignment = AbsoluteAlignment.CenterLeft)
+                    )
+                }
+
+
+            }
+        }
+    }
+

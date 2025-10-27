@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.text)
+    implementation(libs.androidx.tv.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
